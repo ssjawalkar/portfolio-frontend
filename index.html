@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Samihan Jawalkar – Portfolio</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX transformation in the browser -->
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div id="root"></div>
+    <script type="text/babel">
+      /*
+       * Frontend for the personal portfolio.  This client is built with React
+       * and styled using Tailwind CSS, all loaded from CDNs.  Data is
+       * fetched from the FastAPI backend using simple GET requests.  Update
+       * the API_URL constant once the backend is deployed on Render.
+       */
+
+      const API_URL = "http://localhost:8000"; // replace with your Render backend URL
+
+      function Navbar() {
+        const links = [
+          { href: "#home", label: "Home" },
+          { href: "#about", label: "About" },
+          { href: "#skills", label: "Skills" },
+          { href: "#projects", label: "Projects" },
+          { href: "#experience", label: "Experience" },
+          { href: "#contact", label: "Contact" },
+        ];
+        return (
+          <nav className="fixed top-0 left-0 right-0 bg-white shadow z-50">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+              <span className="font-bold text-xl">Samihan Jawalkar</span>
+              <ul className="flex space-x-4">
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      className="text-gray-700 hover:text-blue-600 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
+        );
+      }
+
+      function HomeSection({ about }) {
+        return (
+          <section id="home" className="pt-20 pb-24 bg-blue-600 text-white">
+            <div className="max-w-5xl mx-auto px-4 text-center">
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+                {about.name}
+              </h1>
+              <p className="text-xl mb-6">{about.role}</p>
+              <p className="max-w-3xl mx-auto">
+                {about.bio.split(".")[0].trim()}.
+              </p>
+              <div className="mt-6 space-x-4">
+                <a
+                  href={about.linkedin}
+                  className="inline-block px-4 py-2 bg-white text-blue-600 rounded shadow hover:bg-gray-100 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </a>
+                <a
+                  href={about.github}
+                  className="inline-block px-4 py-2 bg-white text-blue-600 rounded shadow hover:bg-gray-100 transition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function AboutSection({ about }) {
+        return (
+          <section id="about" className="py-16 px-4 bg-gray-50">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4">About Me</h2>
+              <p className="text-lg leading-relaxed whitespace-pre-line">
+                {about.bio}
+              </p>
+              <div className="mt-4">
+                <p className="font-semibold">Location: {about.location}</p>
+                <p className="font-semibold">Email: {about.email}</p>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function SkillsSection({ skills }) {
+        return (
+          <section id="skills" className="py-16 px-4 bg-white">
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-3xl font-bold mb-8">Skills</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {Object.keys(skills).map((category) => (
+                  <div key={category}>
+                    <h3 className="text-xl font-semibold mb-2">{category}</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      {skills[category].map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function ProjectsSection({ projects }) {
+        return (
+          <section id="projects" className="py-16 px-4 bg-gray-50">
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-3xl font-bold mb-8">Projects</h2>
+              <div className="grid gap-8 sm:grid-cols-2">
+                {projects.map((project) => (
+                  <div
+                    key={project.title}
+                    className="bg-white rounded shadow p-6 flex flex-col"
+                  >
+                    <h3 className="text-2xl font-semibold mb-2">
+                      {project.title}
+                    </h3>
+                    <p className="flex-grow mb-4 text-gray-700">
+                      {project.description}
+                    </p>
+                    <p className="mb-2 text-sm text-gray-500">
+                      <strong>Technologies:</strong> {project.tech_used.join(", ")}
+                    </p>
+                    <a
+                      href={project.github_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline mt-auto"
+                    >
+                      View on GitHub
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function ExperienceSection({ experience }) {
+        return (
+          <section id="experience" className="py-16 px-4 bg-white">
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-3xl font-bold mb-8">Experience</h2>
+              <div className="space-y-8">
+                {experience.map((job) => (
+                  <div key={job.company} className="">
+                    <h3 className="text-2xl font-semibold">
+                      {job.role} — {job.company}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {job.location} | {job.start_date} – {job.end_date}
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      {job.responsibilities.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function ContactSection() {
+        const [status, setStatus] = React.useState(null);
+        const [formData, setFormData] = React.useState({
+          name: "",
+          email: "",
+          message: "",
+        });
+        const handleChange = (e) => {
+          const { name, value } = e.target;
+          setFormData((prev) => ({ ...prev, [name]: value }));
+        };
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          setStatus("loading");
+          fetch(`${API_URL}/contact`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              setStatus("success");
+              setFormData({ name: "", email: "", message: "" });
+            })
+            .catch((err) => {
+              console.error(err);
+              setStatus("error");
+            });
+        };
+        return (
+          <section id="contact" className="py-16 px-4 bg-gray-50">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4">Contact</h2>
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white shadow rounded p-6 space-y-4"
+              >
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="name">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="email">
+                    Email
+                  </label>
+                    <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="message">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows="5"
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+                >
+                  Send Message
+                </button>
+                {status === "loading" && <p className="text-sm text-gray-500">Sending…</p>}
+                {status === "success" && (
+                  <p className="text-sm text-green-600">Thank you! Your message has been sent.</p>
+                )}
+                {status === "error" && (
+                  <p className="text-sm text-red-600">Oops! Something went wrong.</p>
+                )}
+              </form>
+            </div>
+          </section>
+        );
+      }
+
+      function App() {
+        const [about, setAbout] = React.useState(null);
+        const [skills, setSkills] = React.useState(null);
+        const [projects, setProjects] = React.useState([]);
+        const [experience, setExperience] = React.useState([]);
+
+        React.useEffect(() => {
+          async function fetchData() {
+            try {
+              const aboutData = await fetch(`${API_URL}/about`).then((res) => res.json());
+              const skillsData = await fetch(`${API_URL}/skills`).then((res) => res.json());
+              const projectsData = await fetch(`${API_URL}/projects`).then((res) => res.json());
+              const experienceData = await fetch(`${API_URL}/experience`).then((res) => res.json());
+              setAbout(aboutData);
+              setSkills(skillsData);
+              setProjects(projectsData);
+              setExperience(experienceData);
+            } catch (error) {
+              console.error("Failed to fetch data", error);
+            }
+          }
+          fetchData();
+        }, []);
+
+        if (!about || !skills) {
+          return <p className="mt-20 text-center">Loading portfolio…</p>;
+        }
+
+        return (
+          <div>
+            <Navbar />
+            <HomeSection about={about} />
+            <AboutSection about={about} />
+            <SkillsSection skills={skills} />
+            <ProjectsSection projects={projects} />
+            <ExperienceSection experience={experience} />
+            <ContactSection />
+            <footer className="py-6 text-center text-sm bg-white">
+              © {new Date().getFullYear()} {about.name}. All rights reserved.
+            </footer>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
