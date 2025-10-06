@@ -320,7 +320,7 @@
             .catch((err) => {
               console.error(err);
               setStatus("error");
-           });
+            });
         };
         return (
           <section id="contact" className="py-20 px-4 bg-gray-100">
@@ -409,4 +409,48 @@
       function App() {
         const [about, setAbout] = React.useState(null);
         const [skills, setSkills] = React.useState(null);
-        const [projects, setProj
+        const [projects, setProjects] = React.useState([]);
+        const [experience, setExperience] = React.useState([]);
+
+        React.useEffect(() => {
+          async function fetchData() {
+            try {
+              const aboutData = await fetch(`${API_URL}/about`).then((res) => res.json());
+              const skillsData = await fetch(`${API_URL}/skills`).then((res) => res.json());
+              const projectsData = await fetch(`${API_URL}/projects`).then((res) => res.json());
+              const experienceData = await fetch(`${API_URL}/experience`).then((res) => res.json());
+              setAbout(aboutData);
+              setSkills(skillsData);
+              setProjects(projectsData);
+              setExperience(experienceData);
+            } catch (error) {
+              console.error("Failed to fetch data", error);
+            }
+          }
+          fetchData();
+        }, []);
+
+        if (!about || !skills) {
+          return <p className="mt-20 text-center">Loading portfolio…</p>;
+        }
+        return (
+          <div>
+            <Navbar />
+            <HeroSection about={about} />
+            <AboutSection about={about} />
+            <SkillsSection skills={skills} />
+            <ProjectsSection projects={projects} />
+            <ExperienceSection experience={experience} />
+            <ContactSection />
+            <footer className="py-6 text-center text-sm bg-white">
+              © {new Date().getFullYear()} {about.name}. All rights reserved.
+            </footer>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
